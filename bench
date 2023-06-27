@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# curl https://bench.ctoaisucon.com/benchmark
+curl https://twbphq41m3.execute-api.ap-northeast-1.amazonaws.com/benchmark
