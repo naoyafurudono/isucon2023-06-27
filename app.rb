@@ -43,16 +43,40 @@ module Isuconp
         client
       end
 
+      # def db_initialize
+      #   sql = []
+      #   sql << 'DELETE FROM users WHERE id > 1000'
+      #   sql << 'DELETE FROM posts WHERE id > 10000'
+      #   sql << 'DELETE FROM comments WHERE id > 100000'
+      #   sql << 'UPDATE users SET del_flg = 0'
+      #   sql << 'UPDATE users SET del_flg = 1 WHERE id % 50 = 0'
+      #   sql.each do |s|
+      #     db.prepare(s).execute
+      #   end
+      # end
+
       def db_initialize
-        sql = []
-        sql << 'DELETE FROM users WHERE id > 1000'
-        sql << 'DELETE FROM posts WHERE id > 10000'
-        sql << 'DELETE FROM comments WHERE id > 100000'
-        sql << 'UPDATE users SET del_flg = 0'
-        sql << 'UPDATE users SET del_flg = 1 WHERE id % 50 = 0'
-        sql.each do |s|
-          db.prepare(s).execute
-        end
+        db.query('START TRANSACTION')
+      
+        delete_users_query = 'DELETE FROM users WHERE id > 1000'
+        delete_posts_query = 'DELETE FROM posts WHERE id > 10000'
+        delete_comments_query = 'DELETE FROM comments WHERE id > 100000'
+        update_users_query1 = 'UPDATE users SET del_flg = 0'
+        update_users_query2 = 'UPDATE users SET del_flg = 1 WHERE id % 50 = 0'
+      
+        delete_users_stmt = db.prepare(delete_users_query)
+        delete_posts_stmt = db.prepare(delete_posts_query)
+        delete_comments_stmt = db.prepare(delete_comments_query)
+        update_users_stmt1 = db.prepare(update_users_query1)
+        update_users_stmt2 = db.prepare(update_users_query2)
+      
+        delete_users_stmt.execute
+        delete_posts_stmt.execute
+        delete_comments_stmt.execute
+        update_users_stmt1.execute
+        update_users_stmt2.execute
+      
+        db.query('COMMIT')
       end
 
       def try_login(account_name, password)
