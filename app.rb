@@ -103,6 +103,7 @@ module Isuconp
       #   # opensslのバージョンによっては (stdin)= というのがつくので取る
       #   `printf "%s" #{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
       # end
+      
 
       def digest(src)
         @cache ||= {}  # キャッシュ用のハッシュテーブルを初期化
