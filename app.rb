@@ -99,10 +99,23 @@ module Isuconp
         return true
       end
 
+      # def digest(src)
+      #   # opensslのバージョンによっては (stdin)= というのがつくので取る
+      #   `printf "%s" #{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
+      # end
+
       def digest(src)
-        # opensslのバージョンによっては (stdin)= というのがつくので取る
-        `printf "%s" #{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
+        @cache ||= {}  # キャッシュ用のハッシュテーブルを初期化
+      
+        if @cache.key?(src)
+          @cache[src]  # キャッシュから結果を取得
+        else
+          result = `printf "%s" #{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
+          @cache[src] = result  # 結果をキャッシュに保存
+          result
+        end
       end
+      
 
       def calculate_salt(account_name)
         digest account_name
